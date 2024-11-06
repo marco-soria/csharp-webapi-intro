@@ -6,16 +6,28 @@ namespace csharp_webapi_intro.Controllers;
 [Route("api/[controller]")]
 public class HelloWorldController:  ControllerBase
 {
-    IHelloWorldService helloWorldService;
+    protected readonly IHelloWorldService _helloWorldService;
 
-    public HelloWorldController(IHelloWorldService helloWorld)
+    TasksContext dbcontext;
+
+    public HelloWorldController(IHelloWorldService helloWorld, TasksContext db)
     {
-        helloWorldService = helloWorld;
+        _helloWorldService = helloWorld;
+        dbcontext = db;
     }
 
      [HttpGet]
     public IActionResult Get()
     {
-        return Ok(helloWorldService.GetHelloWorld());
+        return Ok(_helloWorldService.GetHelloWorld());
+    }
+
+    [HttpGet]
+    [Route("createdb")]
+    public IActionResult CreateDatabase()
+    {
+        dbcontext.Database.EnsureCreated();
+
+        return Ok();
     }
 }
